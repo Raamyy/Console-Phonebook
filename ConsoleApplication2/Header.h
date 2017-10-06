@@ -3,6 +3,7 @@
 #include<vector>
 #include<algorithm>
 #include<map>
+#include<fstream>
 #include<windows.h>
 using namespace std;
 
@@ -10,8 +11,61 @@ vector<string>contacts;
 map <string, int>m;
 int i;
 string s;
+ifstream datafile_r;
+ofstream datafile_w;
+void openDataFileToRead() {
+    if(datafile_r.is_open())datafile_r.close();
+	datafile_r.open("data.txt");
+}
 
+void openDataFileToWrite() {
+    if(datafile_w.is_open()) datafile_w.close();
+    datafile_w.open("data.txt",ios::app);
 
+}
+void writeContactToFile(string name) {
+    openDataFileToWrite();
+	datafile_w << name <<endl;
+    datafile_w.close();
+}
+
+void getContactFromFileonStart() {
+    string line;
+    openDataFileToRead();
+    while(getline(datafile_r,line)) {
+    
+        contacts.push_back(line);
+        m[line]++;
+    }
+    
+}
+void deleteContactFromFile(string name) {
+	ofstream temp("temp.txt");
+    string line;
+    openDataFileToRead();
+	while (getline(datafile_r,line)){
+        if(line.compare(name) != 0)
+    		temp << line << endl;
+    }
+    temp.close();
+		remove("data.txt");
+		rename("temp.txt","data.txt");
+	
+}
+
+void updateContactinFile(string name,string newname) {
+    ofstream temp("temp.txt");
+    string line;
+    openDataFileToRead();
+    while(getline(datafile_r,line)) {
+        if(line.compare(name) == 0) line.replace(0,name.length(), newname);
+        temp<<line<<endl;
+        
+    }
+    temp.close();
+    remove("data.txt");
+		rename("temp.txt","data.txt");
+}
 void wait()
 {
 	for (unsigned long long i = 0; i<1e8; i++);
@@ -20,7 +74,7 @@ void wait()
 
 void SetColor(int value)
 {
-	SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), value);
+    SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), value);
 }
 
 void space(int x)
@@ -46,7 +100,6 @@ void welcome()
 		cout << "Enter contact names and enter the word done to continue when finished.\n(case sesitive)" << endl;
 		cout << "______________________________________________________________________________" << endl;
 		wait();
-		system("CLS");
 
 	}
 	SetColor(7);
@@ -61,9 +114,27 @@ void welcome()
 
 
 }
+
+
+void PrintContacts()
+{
+	system("cls");
+    
+	cout << "Your contacts are : " << endl;
+	cout << "--------------------- " << endl;
+	sort(contacts.begin(), contacts.end());
+	for (int i = 0; i<contacts.size(); i++)
+	{
+		cout << i + 1 << "- " << contacts[i] << endl;
+	}
+
+	cout << "_____________________________ " << endl;
+}
+
+
 void firstInput()
 {
-
+    PrintContacts();
 
 	while (true)
 	{
@@ -78,6 +149,7 @@ void firstInput()
 			continue;
 		}
 		contacts.push_back(s);
+        writeContactToFile(s);
 		m[s]++;
 
 
@@ -85,19 +157,6 @@ void firstInput()
 	cout << endl;
 }
 
-void PrintContacts()
-{
-	system("cls");
-	cout << "Your contacts are : " << endl;
-	cout << "--------------------- " << endl;
-	sort(contacts.begin(), contacts.end());
-	for (int i = 0; i<contacts.size(); i++)
-	{
-		cout << i + 1 << "- " << contacts[i] << endl;
-	}
-
-	cout << "_____________________________ " << endl;
-}
 
 void PrintfContacts()
 {
@@ -157,6 +216,7 @@ void AddContact()
 		}
 
 		contacts.push_back(s);
+        writeContactToFile(s);
 		m[s]++;
 		break;
 	}
@@ -223,13 +283,18 @@ entername:
 
 	}
 	m[s]++;
+    updateContactinFile(contacts[i-1],s);
 	contacts[i - 1] = s;
+
 }
 
 void DeleteName()
 {
+    deleteContactFromFile(contacts[i-1]);
 	m[contacts[i - 1]] = 0;
 	cout << "Contact " << contacts[i - 1] << " deleted.\n ";
 	contacts.erase(contacts.begin() + i - 1);
+    
 }
+
 
