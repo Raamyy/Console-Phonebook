@@ -100,7 +100,7 @@ void welcome()
 		cout << "Enter contact names and enter the word done to continue when finished.\n(case sesitive)" << endl;
 		cout << "______________________________________________________________________________" << endl;
 		wait();
-
+        system("CLS");
 	}
 	SetColor(7);
 
