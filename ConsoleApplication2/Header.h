@@ -5,6 +5,7 @@
 #include<map>
 #include<fstream>
 #include<windows.h>
+#include <math.h>
 using namespace std;
 
 vector<string>contacts;
@@ -162,7 +163,7 @@ void PrintfContacts()
 {
 	system("cls");
 	cout << "Your final contacts are : " << endl;
-	cout << "------------------------------ " << endl;
+	cout << "--------------------------------" << endl;
 	sort(contacts.begin(), contacts.end());
 	for (int i = 0; i<contacts.size(); i++)
 	{
